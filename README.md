@@ -1,6 +1,9 @@
 # web_wechat_api
 基于itchat&amp;flask的web微信接口
 
+# 用法 
+    将微信的登陆发消息接口可以用restful接口的形式调用
+
 # 依赖安装(macOS,Centos)
 
 ```bash
@@ -20,4 +23,4 @@ $ curl 'http://127.0.0.1:9118/wechat_login' -H Content-Type:application/json -v 
 ```
 
 # 其他接口
-    见 api.py。
+    见 api.py 中 @app.route。

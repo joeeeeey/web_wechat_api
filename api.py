@@ -15,11 +15,7 @@ from urllib.parse   import quote
 from urllib.request import urlopen
 import threading
 
-# def notify_LoggedStatus(status):
-#     url = "http://127.0.0.1:8282/wechat/change_wechat_login_status?status=" + status
-#     r = urllib.request.urlopen(url).read()
-#     return r
-# 心跳
+# 心跳,向文件传输助手定时推送保证不被登出
 # def keep_sending(itchat):
 #   while 1:
 #       try:
@@ -49,31 +45,24 @@ def add_friend(msg):
     itchat.add_friend(**msg['Text']) # 该操作会自动将新好友的消息录入，不需要重载通讯录
     itchat.send_msg('Nice to meet you!', msg['RecommendInfo']['UserName'])
 
-# {'MsgId': '3970970061797680506', 'FromUserName': '@@c47d15dd20ad688bb05837ca869af2d274d7c041c8862e91b3f1c3ab1841fd81', 
-#'ToUserName': '@4c4a1417b6b770402ae3a366e7ffa132', 'MsgType': 1, 'Content': '@Blackice\u2005', 
-#'Status': 3, 'ImgStatus': 1, 'CreateTime': 1489375281, 'VoiceLength': 0, 'PlayLength': 0, 
-#'FileName': '', 'FileSize': '', 'MediaId': '', 'Url': '', 'AppMsgType': 0, 'StatusNotifyCode': 0, 
-#'StatusNotifyUserName': '', 'RecommendInfo': {'UserName': '', 'NickName': '', 'QQNum': 0, 'Province': '', 
-#'City': '', 'Content': '', 'Signature': '', 'Alias': '', 'Scene': 0, 'VerifyFlag': 0, 'AttrStatus': 0, 
-#'Sex': 0, 'Ticket': '', 'OpCode': 0}, 'ForwardFlag': 0, 'AppInfo': {'AppID': '', 'Type': 0}, 
-#'HasProductId': 0, 'Ticket': '', 'ImgHeight': 0, 'ImgWidth': 0, 'SubMsgType': 0, 'NewMsgId': 3970970061797680506, 
-#'OriContent': '', 'ActualUserName': '@6bbbcd29bafd4834cee7145000e505e3', 'ActualNickName': '黄尔东', 'isAt': True, 'Type': 'Text', 'Text': '@Blackice\u2005'}
+    # {'MsgId': '3970970061797680506', 'FromUserName': '@@c47d15dd20ad688bb05837ca869af2d274d7c041c8862e91b3f1c3ab1841fd81', 
+    #'ToUserName': '@4c4a1417b6b770402ae3a366e7ffa132', 'MsgType': 1, 'Content': '@Blackice\u2005', 
+    #'Status': 3, 'ImgStatus': 1, 'CreateTime': 1489375281, 'VoiceLength': 0, 'PlayLength': 0, 
+    #'FileName': '', 'FileSize': '', 'MediaId': '', 'Url': '', 'AppMsgType': 0, 'StatusNotifyCode': 0, 
+    #'StatusNotifyUserName': '', 'RecommendInfo': {'UserName': '', 'NickName': '', 'QQNum': 0, 'Province': '', 
+    #'City': '', 'Content': '', 'Signature': '', 'Alias': '', 'Scene': 0, 'VerifyFlag': 0, 'AttrStatus': 0, 
+    #'Sex': 0, 'Ticket': '', 'OpCode': 0}, 'ForwardFlag': 0, 'AppInfo': {'AppID': '', 'Type': 0}, 
+    #'HasProductId': 0, 'Ticket': '', 'ImgHeight': 0, 'ImgWidth': 0, 'SubMsgType': 0, 'NewMsgId': 3970970061797680506, 
+    #'OriContent': '', 'ActualUserName': '@6bbbcd29bafd4834cee7145000e505e3', 'ActualNickName': '黄尔东', 'isAt': True, 'Type': 'Text', 'Text': '@Blackice\u2005'}
 
 @itchat.msg_register(TEXT, isGroupChat=True)
 def text_reply(msg):
     print(msg)
     if msg['isAt']:
-        index = msg['Content'].find('5151')
+        index = msg['Content'].find('2323')
         Text = msg['Content'][index:200]
         print(Text)
         print(Text[0:4])
-        if Text[0:4] == "5151":
-            FromUserName = msg['FromUserName']
-            url = "http://127.0.0.1:8282/wechat/wechat_push"
-            path = "?intention=intelligent_reply&FromUserName=" + FromUserName + "&Text=" + quote(Text)
-            r = urllib.request.urlopen(url + path).read() 
-            # itchat.send(u'@%s\u2005I received: %s' % (msg['ActualNickName'], msg['Content']), msg['FromUserName'])
-
 
 # 监控登陆状态 初始化
 def monitor_login(itchat):
@@ -118,10 +107,6 @@ def QR_to_b64(uuid, status, qrcode):
 
 app = Flask(__name__)
 
-# curl 'http://127.0.0.1:9118' -H Content-Type:application/json -v
-@app.route('/', methods=['GET', 'POST'])
-def api_root():
-    return jsonify({'Alice': '2341', 'Beth': '9102', 'Cecil': '3258'})
 
 thread = Thread()
 # 生成二维码 登陆
